@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>E_CommerceWebsite.BusinessLogicLayer</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Concrete\" />
+    <Folder Include="Abstract\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E-CommerceWebsite.DataAccesLayer\E-CommerceWebsite.DataAccesLayer.csproj" />
+    <ProjectReference Include="..\E-CommerceWebsite.EntitiesLayer\E-CommerceWebsite.EntitiesLayer.csproj" />
+  </ItemGroup>
+
+</Project>
