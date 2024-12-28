@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.11" />
   </ItemGroup>
 
 </Project>
