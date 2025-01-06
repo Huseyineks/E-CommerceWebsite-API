@@ -9,5 +9,14 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 {
     public class AppUser : IdentityUser<int>
     {
+        public string Neighbourhood {  get; set; }
+
+        public string Street { get; set; }
+
+        public string City { get; set; }
+
+        public string PostalCode { get; set; }
+
+        public string Adress {  get; set; }
     }
 }

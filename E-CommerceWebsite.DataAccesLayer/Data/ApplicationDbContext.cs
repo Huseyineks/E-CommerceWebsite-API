@@ -19,9 +19,28 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Product>(entity =>
+            {
+                entity.Property(i => i.Size).HasConversion<string>();
+            });
+
+            builder.Entity<Order>(entity =>
+            {
+                entity.Property(i => i.Size).HasConversion<string>();
+                entity.Property(i => i.ShippingStatus).HasConversion<string>();
+
+            });
+
+
             base.OnModelCreating(builder);
 
 
         }
+
+        public DbSet<Product> Products { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+
     }
 }
