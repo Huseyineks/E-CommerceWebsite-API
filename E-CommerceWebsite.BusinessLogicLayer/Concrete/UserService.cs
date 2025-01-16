@@ -1,7 +1,6 @@
 ﻿using E_CommerceWebsite.BusinessLogicLayer.Abstract;
 using E_CommerceWebsite.DataAccesLayer.Abstract;
 using E_CommerceWebsite.EntitiesLayer.Model;
-using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +34,5 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
         {
             return await _userRepository.GetHostUser();
         }
-
-        
     }
 }

@@ -1,8 +1,6 @@
 ﻿using E_CommerceWebsite.DataAccesLayer.Abstract;
 using E_CommerceWebsite.EntitiesLayer.Model;
-using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,15 +9,12 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-
-
 namespace E_CommerceWebsite.DataAccesLayer.Concrete
 {
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
 
         public UserRepository(UserManager<AppUser> userManager,IHttpContextAccessor httpContextAccessor)
         {
@@ -43,7 +38,5 @@ namespace E_CommerceWebsite.DataAccesLayer.Concrete
 
             return await _userManager.GetUserAsync(user);
         }
-
-       
     }
 }
