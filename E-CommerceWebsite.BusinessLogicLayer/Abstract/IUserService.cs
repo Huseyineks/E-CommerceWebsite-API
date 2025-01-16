@@ -1,4 +1,5 @@
 ﻿using E_CommerceWebsite.EntitiesLayer.Model;
+using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Abstract
         AppUser Get(Expression<Func<AppUser, bool>> filter);
 
         Task<AppUser> GetHostUser();
+
+        
     }
 }
