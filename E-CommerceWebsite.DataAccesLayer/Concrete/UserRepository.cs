@@ -44,6 +44,9 @@ namespace E_CommerceWebsite.DataAccesLayer.Concrete
             return await _userManager.GetUserAsync(user);
         }
 
-       
+        public async Task UpdateUser(AppUser user)
+        {
+            await _userManager.UpdateAsync(user);
+        }
     }
 }

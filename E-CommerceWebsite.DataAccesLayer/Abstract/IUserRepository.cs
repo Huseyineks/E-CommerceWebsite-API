@@ -18,6 +18,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Abstract
 
         Task<AppUser> GetHostUser();
 
+        Task UpdateUser(AppUser user);
+
         
 
 

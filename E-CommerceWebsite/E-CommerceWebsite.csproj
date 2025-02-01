@@ -27,4 +27,8 @@
     <ProjectReference Include="..\E-CommerceWebsite.EntitiesLayer\E-CommerceWebsite.EntitiesLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+  </ItemGroup>
+
 </Project>

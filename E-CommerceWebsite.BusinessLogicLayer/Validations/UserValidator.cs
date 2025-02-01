@@ -19,10 +19,10 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Validations
 
             RuleFor(i => i.Username).Must(beAlphabetic).WithMessage("Please enter a valid name.").NotEmpty().WithMessage("Name field is required.");
             RuleFor(i => i.Email).EmailAddress().WithMessage("Please enter a valid email").NotEmpty().WithMessage("Email field is required.");
-            RuleFor(i => i.Adress).NotEmpty().WithMessage("Address field is required");
-            RuleFor(i => i.Street).NotEmpty().WithMessage("Street field is required");
-            RuleFor(i => i.City).NotEmpty().WithMessage("City field is required");
-            RuleFor(i => i.Neighbourhood).NotEmpty().WithMessage("Neighbourhood field is required");
+            RuleFor(i => i.Adress).NotEmpty().WithMessage("Address field is required.");
+            RuleFor(i => i.Street).NotEmpty().WithMessage("Street field is required.");
+            RuleFor(i => i.City).NotEmpty().WithMessage("City field is required.");
+            RuleFor(i => i.Neighbourhood).NotEmpty().WithMessage("Neighbourhood field is required.");
             RuleFor(i => i.PostalCode).Must(beNumeric).WithMessage("Please enter a valid Postal Code").NotEmpty().WithMessage("Postal Code field is required.");
             RuleFor(i => i.ConfirmPassword).Equal(i => i.Password).WithMessage("Please make sure that passwords are same.");
 

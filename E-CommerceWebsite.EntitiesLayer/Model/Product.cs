@@ -10,13 +10,15 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
     {
         public int Id { get; set; }
 
-        public Guid rowGuid { get; set; }
+        public Guid RowGuid { get; set; }
 
-        public string productName { get; set; }
+        public string ProductName { get; set; }
 
-        public string productPrice { get; set; }
+        public string ProductPrice { get; set; }
 
-        public string productDescription { get; set; }
+        public string ProductDescription { get; set; }
+
+        public string ProductImage { get; set; }
 
         public Size[]? Size { get; set; }
 

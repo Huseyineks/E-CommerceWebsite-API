@@ -36,6 +36,9 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             return await _userRepository.GetHostUser();
         }
 
-        
+        public async Task UpdateUser(AppUser user)
+        {
+            await _userRepository.UpdateUser(user);
+        }
     }
 }

@@ -12,9 +12,9 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public Guid Guid { get; set; }
 
-        public string productName { get; set; }
+        public string ProductName { get; set; }
 
-        public string productPrice { get; set; }
+        public string ProductPrice { get; set; }
 
         public Size Size { get; set; }
 

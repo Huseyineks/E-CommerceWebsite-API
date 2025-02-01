@@ -17,6 +17,8 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Abstract
 
         Task<AppUser> GetHostUser();
 
+        Task UpdateUser(AppUser user);
+
         
     }
 }
