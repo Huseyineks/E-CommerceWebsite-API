@@ -23,5 +23,9 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
         public string? RefreshToken { get; set; }
 
         public DateTime RefreshTokenExpiry { get; set; }
+
+        //relations
+
+        public virtual List<Order>? Orders { get; set; }
     }
 }

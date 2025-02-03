@@ -158,7 +158,7 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             {
                 var jwtToken = tokenHandler.ReadJwtToken(token);
 
-                 if(jwtToken.ValidTo <= DateTime.Now)
+                 if(jwtToken.ValidTo <= DateTime.UtcNow)
                 {
                     return TokenStatus.Expired;
                 }

@@ -19,5 +19,19 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
         public Size Size { get; set; }
 
         public ShippingStatus ShippingStatus { get; set; }
+
+        public OrderStatus OrderStatus { get; set; }
+
+
+
+       
+
+        //relations
+
+        public virtual AppUser? User { get; set; }
+
+        public virtual int userId { get; set; }
+
+        
     }
 }
