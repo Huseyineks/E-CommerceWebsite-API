@@ -13,6 +13,7 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Abstract
 
         T Get(Expression<Func<T, bool>> filter);
 
+        List<T> GetFilteredList(Expression<Func<T, bool>> filter);
         void Remove(T entity);
 
         void Update(T entity);

@@ -33,6 +33,11 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             return _baseRepository.GetAll();
         }
 
+        public List<T> GetFilteredList(Expression<Func<T, bool>> filter)
+        {
+            return _baseRepository.GetFilteredList(filter);
+        }
+
         public void Remove(T entity)
         {
             _baseRepository.Remove(entity);

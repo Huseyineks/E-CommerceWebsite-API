@@ -40,6 +40,12 @@ namespace E_CommerceWebsite.DataAccesLayer.Concrete
             return _dbSet.ToList();
         }
 
+        public List<T> GetFilteredList(Expression<Func<T, bool>> filter) {
+        
+        
+            return _dbSet.Where(filter).ToList();
+        }
+
         public void Update(T entity)
         {
             _dbSet.Update(entity);

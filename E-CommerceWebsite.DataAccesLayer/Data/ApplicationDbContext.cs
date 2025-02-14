@@ -28,6 +28,7 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
             {
                 entity.Property(i => i.Size).HasConversion<string>();
                 entity.Property(i => i.ShippingStatus).HasConversion<string>();
+                entity.Property(i => i.OrderStatus).HasConversion<string>();
 
             });
 

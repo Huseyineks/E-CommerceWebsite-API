@@ -16,11 +16,15 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public string ProductPrice { get; set; }
 
-        public Size Size { get; set; }
+        public string ProductImage { get; set; }
 
-        public ShippingStatus ShippingStatus { get; set; }
+        public string ProductDescription { get; set; }
 
-        public OrderStatus OrderStatus { get; set; }
+        public Size? Size { get; set; }
+
+        public ShippingStatus? ShippingStatus { get; set; }
+
+        public OrderStatus? OrderStatus { get; set; }
 
 
 
@@ -30,7 +34,7 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public virtual AppUser? User { get; set; }
 
-        public virtual int userId { get; set; }
+        public int userId { get; set; }
 
         
     }

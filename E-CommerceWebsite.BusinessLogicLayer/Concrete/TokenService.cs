@@ -39,7 +39,7 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.NameIdentifier,user.RowGuid.ToString())
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
             };
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
             SigningCredentials signInCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
