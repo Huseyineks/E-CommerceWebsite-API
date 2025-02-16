@@ -20,6 +20,8 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public string ProductDescription { get; set; }
 
+        public int ProductNumber { get; set; }
+
         public Size? Size { get; set; }
 
         public ShippingStatus? ShippingStatus { get; set; }
