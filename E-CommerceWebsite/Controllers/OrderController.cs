@@ -19,6 +19,27 @@ namespace E_CommerceWebsite.Controllers
         }
 
         [HttpGet]
+        [Route("api/getNumber")]
+
+        public IActionResult GetNumber() { 
+        
+            var itemNumber = _orderService.GetAll().Select(i => i.ProductNumber).Sum();
+
+            try
+            {
+
+
+
+                return Ok(itemNumber);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        
+        }
+
+        [HttpGet]
         [Route("api/getCartItems")]
         public IActionResult GetCartItems(string userId) {
 
