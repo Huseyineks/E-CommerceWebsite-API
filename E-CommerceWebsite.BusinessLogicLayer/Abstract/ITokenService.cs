@@ -1,5 +1,6 @@
 ﻿using E_CommerceWebsite.EntitiesLayer.Model;
 using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,17 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Abstract
 
         string GenerateRefreshTokenString();
 
-        ClaimsPrincipal GetTokenPrincipal(string token);
+        ClaimsPrincipal GetTokenPrincipal();
 
-        Task<LoginResponse> RefreshToken(RefreshTokenDTO model);
+        Task<LoginResponse> RefreshToken();
 
-        TokenStatus IsExpired(string token);
+        TokenStatus IsExpired();
+
+        void SetTokensInsideCookie(TokenDTO tokenDTO);
+
+
+
+        bool RemoveCookies();
+       
     }
 }

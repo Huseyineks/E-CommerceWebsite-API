@@ -43,6 +43,46 @@ namespace E_CommerceWebsite.Controllers
 
         }
 
+        [HttpGet]
+        [Route("api/get")]
+
+        public IActionResult Get(int id)
+        {
+            try
+            {
+
+                var product = _productService.Get(i => i.Id == id);
+
+                if (product != null)
+                {
+                    return Ok(product);
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        errorMessage = "Ürün bulunamadı."
+                    });
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new
+                {
+                    errorMessage = ex.Message
+                });
+            }
+
+            
+
+
+
+
+            
+
+        }
+
 
 
         [HttpPost]

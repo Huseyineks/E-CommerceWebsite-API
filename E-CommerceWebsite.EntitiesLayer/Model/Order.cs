@@ -22,15 +22,15 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public int ProductNumber { get; set; }
 
-        public Size? Size { get; set; }
+        //public Size? Size { get; set; }
 
-        public ShippingStatus? ShippingStatus { get; set; }
+        //public ShippingStatus? ShippingStatus { get; set; }
 
         public OrderStatus? OrderStatus { get; set; }
 
 
 
-       
+
 
         //relations
 

@@ -15,6 +15,9 @@ using System.Security.Cryptography;
 using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
 {
@@ -24,14 +27,17 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
         private readonly UserManager<AppUser> _userManager;
         private ILogger<ITokenService> _logger;
         private readonly IUserService _userService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TokenService(IConfiguration configuration, UserManager<AppUser> userManager, IUserService userService, ILogger<ITokenService> logger)
+        public TokenService(IConfiguration configuration, UserManager<AppUser> userManager, IUserService userService, ILogger<ITokenService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _userManager = userManager;
 
             _userService = userService;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+            
         }
         public string GenerateTokenString(AppUser user)
         {
@@ -76,8 +82,11 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
 
         }
 
-        public ClaimsPrincipal GetTokenPrincipal(string token)
+        public ClaimsPrincipal GetTokenPrincipal()
         {
+
+            _httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("token", out var token);
+
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
 
             var validation = new TokenValidationParameters
@@ -93,10 +102,12 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             return new JwtSecurityTokenHandler().ValidateToken(token, validation,out _);
         }
 
-        public async Task<LoginResponse> RefreshToken(RefreshTokenDTO model)
+        public async Task<LoginResponse> RefreshToken()
         {
-            
-                var principal = GetTokenPrincipal(model.Token);
+
+           
+            _httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+            var principal = GetTokenPrincipal();
                
             
             
@@ -118,7 +129,7 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
            
            
             
-            if (user == null || user.RefreshToken != model.RefreshToken || user.RefreshTokenExpiry <= DateTime.Now)
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiry <= DateTime.Now)
             {
 
                 return result;
@@ -150,15 +161,20 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
 
         }
 
-        public TokenStatus IsExpired(string token)
+        public TokenStatus IsExpired()
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
+            
+
             try
             {
-                var jwtToken = tokenHandler.ReadJwtToken(token);
+                _httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("token", out var token);
 
-                 if(jwtToken.ValidTo <= DateTime.UtcNow)
+                var jwtToken = tokenHandler.ReadJwtToken(token);
+                
+
+                if (jwtToken.ValidTo <= DateTime.UtcNow)
                 {
                     return TokenStatus.Expired;
                 }
@@ -173,6 +189,69 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             }
 
 
+            
+        }
+
+        public void SetTokensInsideCookie(TokenDTO tokenDTO)
+        {
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("token", tokenDTO.Token,
+
+                new CookieOptions
+                {
+                    
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    
+                }
+
+                );
+
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", tokenDTO.RefreshToken,
+
+                new CookieOptions
+                {
+                    
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                   
+                }
+
+                );
+
+
+        }
+
+        public bool RemoveCookies()
+        {
+            try
+            {
+
+
+                var expiredCookieOptions = new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                    Path = "/"
+                };
+
+                _httpContextAccessor.HttpContext.Response.Cookies.Append("token", "", expiredCookieOptions);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", "", expiredCookieOptions);
+
+                return true;
+            }
+            catch{
+
+                return false;
+            
+            }
+
+            
             
         }
     }

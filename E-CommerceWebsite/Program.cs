@@ -20,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -35,6 +36,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
 builder.Services.AddScoped<IValidator<ProductDTO>, ProductValidator>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,10 +58,27 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
 
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = ctx =>
+        {
+            ctx.Request.Cookies.TryGetValue("token", out var token);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                ctx.Token = token;
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -69,7 +89,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+//app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
+app.UseCors(policy => policy
+    .WithOrigins("http://localhost:4200")  
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()  
+);
 
 
 app.UseAuthentication();

@@ -3,6 +3,7 @@ using E_CommerceWebsite.EntitiesLayer.Model;
 using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 
 namespace E_CommerceWebsite.Controllers
 {
@@ -12,10 +13,16 @@ namespace E_CommerceWebsite.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
-        public OrderController(IOrderService orderService, IProductService productService)
+        private readonly IHttpContextAccessor _context;
+        private readonly ITokenService _tokenService;
+        private readonly IUserService _userService;
+        public OrderController(IOrderService orderService, IProductService productService, IHttpContextAccessor context, ITokenService tokenService, IUserService userService)
         {
             _orderService = orderService;
             _productService = productService;
+            _context = context;
+            _tokenService = tokenService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -41,18 +48,38 @@ namespace E_CommerceWebsite.Controllers
 
         [HttpGet]
         [Route("api/getCartItems")]
-        public IActionResult GetCartItems(string userId) {
+        public IActionResult GetCartItems() {
+
+            
+
+            var principal = _tokenService.GetTokenPrincipal();
+
+            var userId = _userService.Get(i => i.UserName == principal.Identity.Name).Id;
+
 
             try
             {
+                List<CartDTO> cartDTO = new List<CartDTO>();
 
-                var cartItems = _orderService.GetFilteredList(i => i.OrderStatus == OrderStatus.InCart && i.userId.ToString() == userId);
+                var cartItems = _orderService.GetFilteredList(i => i.OrderStatus == OrderStatus.InCart && i.userId == userId);
+
+                foreach(var cartItem in cartItems)
+                {
+                    cartDTO.Add(new CartDTO
+                    {
+                        Id = cartItem.Id,
+                        ProductImage = cartItem.ProductImage,
+                        ProductName = cartItem.ProductName,
+                        ProductNumber = cartItem.ProductNumber,
+                        ProductPrice = cartItem.ProductPrice
+                    });
+
+                }
 
                 if (cartItems.Count != 0)
                 {
 
-                    return Ok(cartItems);
-
+                    return Ok(cartDTO);
                 }
                 else
                 {
@@ -87,17 +114,26 @@ namespace E_CommerceWebsite.Controllers
         {
             var product = _productService.Get(i => i.Id == orderDTO.ProductId);
 
-            var existCartItems = _orderService.GetFilteredList(i => i.userId == orderDTO.UserId && i.OrderStatus == OrderStatus.InCart);
+
+            
+
+            var principal = _tokenService.GetTokenPrincipal();
+
+            var userId = _userService.Get(i => i.UserName == principal.Identity.Name).Id;
+
+
+            var existCartItems = _orderService.GetFilteredList(i => i.userId == userId && i.OrderStatus == OrderStatus.InCart);
 
             if (existCartItems.Count != 0 && existCartItems.Any(i => i.ProductImage == product.ProductImage))
             {
                 var existCartItem = existCartItems.First(i => i.ProductImage == product.ProductImage);
 
-                existCartItem.ProductNumber += 1;
-                var decimalPrice = Convert.ToDecimal(existCartItem.ProductPrice);
-                
 
-                var totalPrice = decimalPrice * existCartItem.ProductNumber;
+                var perPrice = Convert.ToDecimal(existCartItem.ProductPrice) / existCartItem.ProductNumber;
+
+                existCartItem.ProductNumber += 1;
+
+                var totalPrice = perPrice * existCartItem.ProductNumber;
 
                 existCartItem.ProductPrice = totalPrice.ToString();
 
@@ -133,8 +169,7 @@ namespace E_CommerceWebsite.Controllers
                     ProductName = product.ProductName,
                     ProductPrice = product.ProductPrice,
                     ProductNumber = 1,
-                    ShippingStatus = ShippingStatus.Unknown,
-                    userId = orderDTO.UserId
+                    userId = userId
 
 
                 };

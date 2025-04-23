@@ -117,12 +117,18 @@ namespace E_CommerceWebsite.Controllers
 
                     await _userService.UpdateUser(user);
 
-                    
-                    return Ok(new
+
+                    var tokenDTO = new TokenDTO
                     {
-                        token = tokenString,
-                        rToken = refreshToken
-                    });
+                        Token = tokenString,
+                        RefreshToken = refreshToken,
+                    };
+
+                    _tokenService.SetTokensInsideCookie(tokenDTO);
+                   
+
+                    
+                    return Ok();
                 }
                 else
                 {
@@ -146,12 +152,29 @@ namespace E_CommerceWebsite.Controllers
 
             
         }
-        [HttpPost]
+
+        [HttpGet]
+        [Route("api/logout")]
+
+        public IActionResult Logout()
+        {
+            if (_tokenService.RemoveCookies())
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            
+        }
+        [HttpGet]
         [Route("api/tokenExpired")]
-        public IActionResult TokenExpired([FromBody] TokenRequestDTO model) {
+        public IActionResult TokenExpired() {
 
 
-            var tokenStatus = _tokenService.IsExpired(model.Token);
+            var tokenStatus = _tokenService.IsExpired();
 
             switch (tokenStatus)
             {
@@ -167,20 +190,24 @@ namespace E_CommerceWebsite.Controllers
 
 
         }
-        [HttpPost]
+        [HttpGet]
         [Route("api/refreshToken")]
-        public async Task<IActionResult> RefreshToken(RefreshTokenDTO model)
+        public async Task<IActionResult> RefreshToken()
         {
 
-            var result =  await _tokenService.RefreshToken(model);
+            var result =  await _tokenService.RefreshToken();
 
-            if (result.IsLoggedIn)
+            if (result.IsLoggedIn) 
             {
-
-                return Ok(new
+                var tokenDTO = new TokenDTO()
                 {
-                    response = result
-                });
+                    RefreshToken = result.RefreshToken,
+                    Token = result.JwtToken
+                };
+                _tokenService.SetTokensInsideCookie(tokenDTO);
+
+                return Ok();
+                
             }
             else
             {
