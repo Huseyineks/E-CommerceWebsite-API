@@ -58,7 +58,8 @@ namespace E_CommerceWebsite.Controllers
                     PostalCode = userDTO.PostalCode,
                     RowGuid = Guid.NewGuid(),
                     Street = userDTO.Street,
-                    UserName = userDTO.Username
+                    UserName = userDTO.Username,
+                    Role = "Admin"
 
                 };
                 var result = await _userManager.CreateAsync(newUser, userDTO.Password);
@@ -219,5 +220,27 @@ namespace E_CommerceWebsite.Controllers
 
 
         }
+
+
+        [HttpGet]
+        [Route("api/isAdmin")]
+
+        public IActionResult IsAdmin()
+        {
+            var principal = _tokenService.GetTokenPrincipal();
+
+
+            var role = principal.FindFirst(ClaimTypes.Role)?.Value;
+            
+            if (role == "Admin")
+            {
+                return Ok(true);
+            }
+
+            return BadRequest(false);
+     
+        }
+
+
     }
 }

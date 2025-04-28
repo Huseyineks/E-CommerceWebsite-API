@@ -24,9 +24,28 @@ namespace E_CommerceWebsite.Controllers
         [Route("api/users")]
         public IActionResult GetAllUsers()
         {
+            var users = _userService.GetAll();
 
+            var usersDTO = new List<UserDTO>();
 
-            return Ok(_userService.GetAll());
+            foreach(var user in users)
+            {
+                usersDTO.Add(new UserDTO
+                {
+                    Username = user.UserName,
+                    Adress = user.Adress,
+                    City = user.City,
+                    Email = user.Email,
+                    Neighbourhood = user.Neighbourhood,
+                    PhoneNumber = user.PhoneNumber,
+                    PostalCode = user.PostalCode,
+                    Street = user.Street,
+                    ConfirmPassword = "",
+                    Password = ""
+                });
+            }
+
+            return Ok(usersDTO);
 
         }
     }

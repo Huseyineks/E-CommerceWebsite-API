@@ -45,7 +45,8 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new Claim(ClaimTypes.Role,user.Role)
             };
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
             SigningCredentials signInCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
@@ -108,11 +109,11 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
            
             _httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
             var principal = GetTokenPrincipal();
-               
+
+
             
-            
-                
-            
+
+
 
             var result = new LoginResponse();
 
@@ -163,7 +164,9 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
 
         public TokenStatus IsExpired()
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            
+            
+            var tokenHandler = new JwtSecurityTokenHandler();                                                        
 
             
 
