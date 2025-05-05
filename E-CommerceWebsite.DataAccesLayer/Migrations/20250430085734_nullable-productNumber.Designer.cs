@@ -4,6 +4,7 @@ using E_CommerceWebsite.DataAccesLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceWebsite.DataAccesLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430085734_nullable-productNumber")]
+    partial class nullableproductNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +47,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -164,9 +164,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
@@ -241,32 +238,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.ProductSizes", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Stock")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("productId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("productId");
-
-                    b.ToTable("ProductSizes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -383,17 +354,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.ProductSizes", b =>
-                {
-                    b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.Product", "Product")
-                        .WithMany("ProductSizes")
-                        .HasForeignKey("productId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.AppUserRole", null)
@@ -448,11 +408,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.AppUser", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.Product", b =>
-                {
-                    b.Navigation("ProductSizes");
                 });
 #pragma warning restore 612, 618
         }

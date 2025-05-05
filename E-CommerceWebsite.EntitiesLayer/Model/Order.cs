@@ -22,6 +22,9 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public int ProductNumber { get; set; }
 
+
+        public DateTime? CreatedDate { get; set; }
+
         //public Size? Size { get; set; }
 
         //public ShippingStatus? ShippingStatus { get; set; }

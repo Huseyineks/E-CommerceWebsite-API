@@ -20,11 +20,16 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public string ProductImage { get; set; }
 
-        public string ProdutNumber { get; set; }
+        public string? ProdutNumber { get; set; }
 
         public string? ProductType { get; set; }
 
         public Size[]? Size { get; set; }
+
+
+        //relation 
+
+        public virtual List<ProductSizes> ProductSizes { get; set; }
 
 
     }

@@ -62,6 +62,7 @@ builder.Services.AddAuthentication(options =>
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = ctx =>
+        
         {
             ctx.Request.Cookies.TryGetValue("token", out var token);
 

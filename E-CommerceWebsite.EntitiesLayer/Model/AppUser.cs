@@ -24,6 +24,8 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public string? RefreshToken { get; set; }
 
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
         public DateTime RefreshTokenExpiry { get; set; }
 
         //relations

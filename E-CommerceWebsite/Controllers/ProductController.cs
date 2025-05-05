@@ -4,6 +4,7 @@ using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 
 namespace E_CommerceWebsite.Controllers
@@ -46,12 +47,12 @@ namespace E_CommerceWebsite.Controllers
         [HttpGet]
         [Route("api/get")]
 
-        public IActionResult Get(int id)
+        public IActionResult Get(string rowGuid)
         {
             try
             {
 
-                var product = _productService.Get(i => i.Id == id);
+                var product = _productService.Get(i => i.RowGuid.ToString() == rowGuid);
 
                 if (product != null)
                 {
@@ -89,6 +90,13 @@ namespace E_CommerceWebsite.Controllers
         [Route("api/addProduct")]
         public IActionResult AddProduct([FromForm] ProductDTO productDTO)
         {
+
+            var productSizesJson = Request.Form["ProductSizes"];
+            if (!string.IsNullOrEmpty(productSizesJson))
+            {
+                productDTO.ProductSizes = JsonConvert.DeserializeObject<List<ProductSizes>>(productSizesJson);
+            }
+
             var check = _validator.Validate(productDTO);
 
             if (check.IsValid)
@@ -100,7 +108,8 @@ namespace E_CommerceWebsite.Controllers
                     ProductName = productDTO.ProductName,
                     ProductPrice = productDTO.ProductPrice,
                     ProductImage = UploadFile(productDTO.ProductImage),
-                    RowGuid = Guid.NewGuid()
+                    RowGuid = Guid.NewGuid(),
+                    ProductSizes = productDTO.ProductSizes
                 };
 
                 _productService.Add(product);
@@ -129,8 +138,42 @@ namespace E_CommerceWebsite.Controllers
             
         }
 
+        [HttpPut]
+        [Route("api/updateProduct")]
+        public IActionResult UpdateProduct(ProductDTO editedProduct)
+        {
+            var product = _productService.Get(i => i.Id == editedProduct.Id);
 
-       
+            product.ProductPrice = editedProduct.ProductPrice != null ? editedProduct.ProductPrice : product.ProductPrice;
+            product.ProductName = editedProduct.ProductName != null ? editedProduct.ProductName : product.ProductName;
+            product.ProductDescription = editedProduct.ProductDescription != null ? editedProduct.ProductDescription : product.ProductDescription;
+
+            if(editedProduct.ProductImage != null)
+            {
+                product.ProductImage = UploadFile(editedProduct.ProductImage);
+            }
+           
+
+
+            try
+            {
+                _productService.Update(product);
+                _productService.Save();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+
+
+
+
+        }
+
+
         private string UploadFile(IFormFile file)
         {
             string? fileName = null;

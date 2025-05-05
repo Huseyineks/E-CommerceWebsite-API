@@ -22,6 +22,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
             builder.Entity<Product>(entity =>
             {
                 entity.Property(i => i.Size).HasConversion<string>();
+
+                entity.HasMany(i => i.ProductSizes).WithOne(i => i.Product).HasForeignKey(i => i.productId).OnDelete(DeleteBehavior.Cascade);
             });
 
             builder.Entity<Order>(entity =>
@@ -41,6 +43,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<ProductSizes> ProductSizes { get; set; }
 
 
     }
