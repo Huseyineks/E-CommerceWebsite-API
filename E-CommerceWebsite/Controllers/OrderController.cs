@@ -71,7 +71,8 @@ namespace E_CommerceWebsite.Controllers
                         ProductImage = cartItem.ProductImage,
                         ProductName = cartItem.ProductName,
                         ProductNumber = cartItem.ProductNumber,
-                        ProductPrice = cartItem.ProductPrice
+                        ProductPrice = cartItem.ProductPrice,
+                        Size = cartItem.Size
                     });
 
                 }
@@ -124,9 +125,9 @@ namespace E_CommerceWebsite.Controllers
 
             var existCartItems = _orderService.GetFilteredList(i => i.userId == userId && i.OrderStatus == OrderStatus.InCart);
 
-            if (existCartItems.Count != 0 && existCartItems.Any(i => i.ProductImage == product.ProductImage))
+            if (existCartItems.Count != 0 && existCartItems.Any(i => i.ProductImage == product.ProductImage && i.Size == orderDTO.Size))
             {
-                var existCartItem = existCartItems.First(i => i.ProductImage == product.ProductImage);
+                var existCartItem = existCartItems.First(i => i.ProductImage == product.ProductImage && i.Size == orderDTO.Size);
 
 
                 var perPrice = Convert.ToDecimal(existCartItem.ProductPrice) / existCartItem.ProductNumber;
@@ -169,7 +170,9 @@ namespace E_CommerceWebsite.Controllers
                     ProductName = product.ProductName,
                     ProductPrice = product.ProductPrice,
                     ProductNumber = 1,
-                    userId = userId
+                    userId = userId,
+                    Size = orderDTO.Size
+                   
 
 
                 };
@@ -281,6 +284,60 @@ namespace E_CommerceWebsite.Controllers
                 });
 
             }
+        }
+
+
+        [HttpPut]
+        [Route("api/reduceNumberOutOfCart")]
+
+        public IActionResult ReduceNumberOutOfCart(ReduceNumberDTO reduceNumberDTO)
+        {
+            var principal = _tokenService.GetTokenPrincipal();
+
+            var userId = _userService.Get(i => i.UserName == principal.Identity.Name).Id;
+
+            var cartItems = _orderService.GetFilteredList(i => i.OrderStatus == OrderStatus.InCart && i.userId == userId);
+
+            var product = _productService.Get(i => i.Id == reduceNumberDTO.ProductId);
+
+            var cartItem = cartItems.Where(i => i.ProductImage == product.ProductImage && i.Size == reduceNumberDTO.Size ).FirstOrDefault();
+
+            if (cartItem != null)
+            {
+                if(cartItem.ProductNumber == 1)
+                {
+                    try
+                    {
+                        _orderService.Remove(cartItem);
+                        _orderService.Save();
+                        return Ok();
+                    }
+                    catch
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    cartItem.ProductNumber -= 1;
+
+                    try
+                    {
+                        _orderService.Update(cartItem);
+                        _orderService.Save();
+                        return Ok();
+                    }
+                    catch
+                    {
+                        return BadRequest();
+                    }
+                    
+                    
+                }
+            }
+            return BadRequest();
+
+        
         }
 
 

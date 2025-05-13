@@ -52,7 +52,9 @@ namespace E_CommerceWebsite.Controllers
             try
             {
 
-                var product = _productService.Get(i => i.RowGuid.ToString() == rowGuid);
+                var product = _productService.GetProductSizes(i => i.RowGuid.ToString() == rowGuid);
+
+
 
                 if (product != null)
                 {
@@ -142,11 +144,31 @@ namespace E_CommerceWebsite.Controllers
         [Route("api/updateProduct")]
         public IActionResult UpdateProduct(ProductDTO editedProduct)
         {
-            var product = _productService.Get(i => i.Id == editedProduct.Id);
+
+            var productSizesJson = Request.Form["ProductSizes"];
+            if (!string.IsNullOrEmpty(productSizesJson))
+            {
+                editedProduct.ProductSizes = JsonConvert.DeserializeObject<List<ProductSizes>>(productSizesJson);
+            }
+
+            var product = _productService.GetProductSizes(i => i.Id == editedProduct.Id);
 
             product.ProductPrice = editedProduct.ProductPrice != null ? editedProduct.ProductPrice : product.ProductPrice;
             product.ProductName = editedProduct.ProductName != null ? editedProduct.ProductName : product.ProductName;
             product.ProductDescription = editedProduct.ProductDescription != null ? editedProduct.ProductDescription : product.ProductDescription;
+            
+            foreach (var item in editedProduct.ProductSizes) {
+            
+                var productSize = product.ProductSizes.FirstOrDefault(i => i.Id == item.Id);
+
+                if (productSize != null)
+                {
+                    productSize.Size = item.Size;
+                    productSize.Stock = item.Stock;
+                }
+            
+            
+            }
 
             if(editedProduct.ProductImage != null)
             {
@@ -173,6 +195,33 @@ namespace E_CommerceWebsite.Controllers
 
         }
 
+        [HttpDelete]
+        [Route("api/deleteProduct")]
+
+
+        public IActionResult DeleteProduct(string rowGuid)
+        {
+
+            var deletedProduct = _productService.Get(i => i.RowGuid.ToString() == rowGuid);
+
+            try
+            {
+                _productService.Remove(deletedProduct);
+                _productService.Save();
+
+                return Ok();
+            }
+            catch {
+
+
+                return BadRequest();
+            
+            }
+
+
+
+
+        }
 
         private string UploadFile(IFormFile file)
         {

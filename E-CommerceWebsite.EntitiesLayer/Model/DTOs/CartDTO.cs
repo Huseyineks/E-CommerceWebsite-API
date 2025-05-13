@@ -18,6 +18,7 @@ namespace E_CommerceWebsite.EntitiesLayer.Model.DTOs
 
         public int ProductNumber { get; set; }
 
+        public string Size { get; set; }
        
 
 

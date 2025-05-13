@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace E_CommerceWebsite.EntitiesLayer.Model
@@ -14,6 +15,7 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         //relations
 
+        [JsonIgnore]
         public virtual Product Product { get; set; }
 
         public int productId { get; set; }

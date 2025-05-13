@@ -24,7 +24,7 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public string? ProductType { get; set; }
 
-        public Size[]? Size { get; set; }
+        
 
 
         //relation 

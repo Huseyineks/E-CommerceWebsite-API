@@ -21,7 +21,7 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
         {
             builder.Entity<Product>(entity =>
             {
-                entity.Property(i => i.Size).HasConversion<string>();
+               
 
                 entity.HasMany(i => i.ProductSizes).WithOne(i => i.Product).HasForeignKey(i => i.productId).OnDelete(DeleteBehavior.Cascade);
             });
