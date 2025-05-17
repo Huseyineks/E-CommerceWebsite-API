@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_CommerceWebsite.DataAccesLayer.Abstract
+namespace E_CommerceWebsite.BusinessLogicLayer.Abstract
 {
-    public interface IOrderRepository : IBaseRepository<Order>
+    public interface IDeliveryAdressesService : IBaseService<DeliveryAdress>
     {
-        
     }
 }

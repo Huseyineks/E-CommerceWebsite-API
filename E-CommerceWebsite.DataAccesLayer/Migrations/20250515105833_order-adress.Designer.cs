@@ -4,6 +4,7 @@ using E_CommerceWebsite.DataAccesLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceWebsite.DataAccesLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515105833_order-adress")]
+    partial class orderadress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,6 +167,10 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Adress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -204,34 +211,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.HasIndex("userId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.OrderDeliveryAdress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Adress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("orderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("orderId")
-                        .IsUnique();
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("OrderDeliveryAdresses");
                 });
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.Product", b =>
@@ -412,25 +391,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.OrderDeliveryAdress", b =>
-                {
-                    b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.Order", "Order")
-                        .WithOne("DeliveryAdress")
-                        .HasForeignKey("E_CommerceWebsite.EntitiesLayer.Model.OrderDeliveryAdress", "orderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.AppUser", "User")
-                        .WithMany("DeliveryAdresses")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.ProductSizes", b =>
                 {
                     b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.Product", "Product")
@@ -495,14 +455,7 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.AppUser", b =>
                 {
-                    b.Navigation("DeliveryAdresses");
-
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.Order", b =>
-                {
-                    b.Navigation("DeliveryAdress");
                 });
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.Product", b =>

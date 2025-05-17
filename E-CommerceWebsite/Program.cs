@@ -37,6 +37,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
 builder.Services.AddScoped<IValidator<ProductDTO>, ProductValidator>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IDeliveryAdressesService, DeliveryAdressesService>();
 builder.Services.AddHttpContextAccessor();
 
 

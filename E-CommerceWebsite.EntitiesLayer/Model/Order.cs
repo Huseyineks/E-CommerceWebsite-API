@@ -22,7 +22,7 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         public int ProductNumber { get; set; }
 
-
+        
         public DateTime? CreatedDate { get; set; }
 
         public string Size { get; set; }
@@ -40,6 +40,9 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
         public virtual AppUser? User { get; set; }
 
         public int userId { get; set; }
+
+
+        public virtual DeliveryAdress? DeliveryAdress { get; set; }
 
         
     }

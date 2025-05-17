@@ -156,19 +156,37 @@ namespace E_CommerceWebsite.Controllers
             product.ProductPrice = editedProduct.ProductPrice != null ? editedProduct.ProductPrice : product.ProductPrice;
             product.ProductName = editedProduct.ProductName != null ? editedProduct.ProductName : product.ProductName;
             product.ProductDescription = editedProduct.ProductDescription != null ? editedProduct.ProductDescription : product.ProductDescription;
-            
-            foreach (var item in editedProduct.ProductSizes) {
-            
-                var productSize = product.ProductSizes.FirstOrDefault(i => i.Id == item.Id);
 
-                if (productSize != null)
+            if (editedProduct.ProductSizes != null)
+            {
+                foreach (var item in editedProduct.ProductSizes)
                 {
-                    productSize.Size = item.Size;
-                    productSize.Stock = item.Stock;
+
+                    var productSize = product.ProductSizes.FirstOrDefault(i => i.Id == item.Id);
+
+                    if (productSize != null)
+                    {
+
+                        productSize.Size = item.Size;
+
+                        if(String.Equals(item.Stock,""))
+                        {
+                            productSize.Stock = "0";
+                        }
+                        else
+                        {
+                            productSize.Stock = item.Stock;
+
+                        }
+                       
+                    }
+
+
                 }
-            
-            
+
             }
+            
+            
 
             if(editedProduct.ProductImage != null)
             {
@@ -221,6 +239,18 @@ namespace E_CommerceWebsite.Controllers
 
 
 
+        }
+
+        [HttpPost]
+
+        [Route("api/productQuantity")]
+        public IActionResult ProductQuantity(OrderDTO orderDTO)
+        {
+            var product = _productService.GetProductSizes(i => i.Id == orderDTO.ProductId);
+
+            var productQuantity = product.ProductSizes.FirstOrDefault(i => i.Size == orderDTO.Size).Stock;
+
+            return Ok(int.Parse(productQuantity));
         }
 
         private string UploadFile(IFormFile file)

@@ -31,8 +31,19 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
                 //entity.Property(i => i.Size).HasConversion<string>();
                 //entity.Property(i => i.ShippingStatus).HasConversion<string>();
                 entity.Property(i => i.OrderStatus).HasConversion<string>();
+               entity.HasOne(i => i.DeliveryAdress).WithOne(i => i.Order).HasForeignKey<DeliveryAdress>(i => i.orderId).OnDelete(DeleteBehavior.NoAction);
 
+                
             });
+
+            builder.Entity<AppUser>(entity =>
+            {
+                entity.HasMany(i => i.DeliveryAdresses).WithOne(i => i.User).HasForeignKey(i => i.userId).OnDelete(DeleteBehavior.Cascade);
+
+               
+            });
+
+           
 
 
             base.OnModelCreating(builder);
@@ -46,6 +57,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
 
         public DbSet<ProductSizes> ProductSizes { get; set; }
 
+
+        public DbSet<DeliveryAdress> OrderDeliveryAdresses { get; set;}
 
     }
 }

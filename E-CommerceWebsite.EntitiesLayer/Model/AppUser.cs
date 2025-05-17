@@ -30,6 +30,7 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         //relations
 
+        public virtual List<DeliveryAdress>? DeliveryAdresses { get; set; }
         public virtual List<Order>? Orders { get; set; }
     }
 }

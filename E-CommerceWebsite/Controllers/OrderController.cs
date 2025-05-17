@@ -1,4 +1,5 @@
 ﻿using E_CommerceWebsite.BusinessLogicLayer.Abstract;
+using E_CommerceWebsite.BusinessLogicLayer.Concrete;
 using E_CommerceWebsite.EntitiesLayer.Model;
 using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using Microsoft.AspNetCore.Http;
@@ -16,21 +17,37 @@ namespace E_CommerceWebsite.Controllers
         private readonly IHttpContextAccessor _context;
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
-        public OrderController(IOrderService orderService, IProductService productService, IHttpContextAccessor context, ITokenService tokenService, IUserService userService)
+        private readonly IDeliveryAdressesService _deliveryAdressesService;
+
+       
+
+        public OrderController(IOrderService orderService, 
+            IProductService productService, 
+            IHttpContextAccessor context, 
+            ITokenService tokenService, 
+            IUserService userService, 
+            IDeliveryAdressesService deliveryAdressesService)
         {
             _orderService = orderService;
             _productService = productService;
             _context = context;
             _tokenService = tokenService;
             _userService = userService;
+            _deliveryAdressesService = deliveryAdressesService;
         }
 
         [HttpGet]
         [Route("api/getNumber")]
 
-        public IActionResult GetNumber() { 
-        
-            var itemNumber = _orderService.GetAll().Select(i => i.ProductNumber).Sum();
+        public IActionResult GetNumber() {
+
+            var principal = _tokenService.GetTokenPrincipal();
+
+            var userId = _userService.Get(i => i.UserName == principal.Identity.Name).Id;
+
+            var itemNumber = _orderService.GetFilteredList(i => i.userId == userId && i.OrderStatus == OrderStatus.InCart).Select(i => i.ProductNumber).Sum();
+
+            
 
             try
             {
@@ -338,6 +355,64 @@ namespace E_CommerceWebsite.Controllers
             return BadRequest();
 
         
+        }
+
+        [HttpPost]
+        [Route("api/completeOrder")]
+
+
+        public IActionResult CompleteOrder(AdressDTO adress)
+        {
+            var principal = _tokenService.GetTokenPrincipal();
+
+            var user = _userService.Get(i => i.UserName == principal.Identity.Name);
+
+            var cartItems = _orderService.GetFilteredList(i => i.OrderStatus == OrderStatus.InCart && i.userId == user.Id);
+
+            DeliveryAdress orderDeliveryAdress = new DeliveryAdress()
+            {
+
+                Adress = adress.Adress,
+                userId = user.Id,
+                orderId = 0
+            };
+
+
+           
+
+
+            foreach ( var cartItem in cartItems )
+            {
+                orderDeliveryAdress.orderId = cartItem.Id;
+
+                
+              _deliveryAdressesService.Add(orderDeliveryAdress);
+              
+                
+                cartItem.OrderStatus = OrderStatus.Ordered;
+                _orderService.Update(cartItem);
+
+                try
+                {
+                    _deliveryAdressesService.Save();
+                }
+                catch {
+
+                    return BadRequest();
+                
+                }
+               
+            }
+
+            return Ok();
+            
+
+            
+
+
+
+
+            
         }
 
 

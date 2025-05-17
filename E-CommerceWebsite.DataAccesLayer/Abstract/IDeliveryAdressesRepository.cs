@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace E_CommerceWebsite.DataAccesLayer.Abstract
 {
-    public interface IOrderRepository : IBaseRepository<Order>
+    public interface IDeliveryAdressesRepository : IBaseRepository<DeliveryAdress>
     {
-        
     }
 }
