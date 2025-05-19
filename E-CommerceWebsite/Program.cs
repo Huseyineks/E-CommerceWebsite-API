@@ -30,6 +30,7 @@ builder.Services.AddIdentity<AppUser, AppUserRole>(options => options.SignIn.Req
     .AddDefaultTokenProviders();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
 builder.Services.AddScoped<IValidator<ProductDTO>, ProductValidator>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDeliveryAdressesService, DeliveryAdressesService>();
+
 builder.Services.AddHttpContextAccessor();
 
 

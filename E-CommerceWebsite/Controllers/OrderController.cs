@@ -5,6 +5,7 @@ using E_CommerceWebsite.EntitiesLayer.Model.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
+using System.Linq;
 
 namespace E_CommerceWebsite.Controllers
 {
@@ -369,50 +370,77 @@ namespace E_CommerceWebsite.Controllers
 
             var cartItems = _orderService.GetFilteredList(i => i.OrderStatus == OrderStatus.InCart && i.userId == user.Id);
 
-            DeliveryAdress orderDeliveryAdress = new DeliveryAdress()
+            foreach (var cartItem in cartItems)
             {
-
-                Adress = adress.Adress,
-                userId = user.Id,
-                orderId = 0
-            };
-
-
-           
-
-
-            foreach ( var cartItem in cartItems )
-            {
-                orderDeliveryAdress.orderId = cartItem.Id;
+                
+                var product = _productService.GetProductSizes(i => i.ProductImage == cartItem.ProductImage);
+                if (product != null)
+                {
+                    var productSize = product.ProductSizes.FirstOrDefault(ps => ps.Size == cartItem.Size);
+                    if (productSize != null)
+                    {
+                        
+                        int currentStock = int.Parse(productSize.Stock);
+                        int newStock = currentStock - cartItem.ProductNumber;
+                        if (newStock >= 0)
+                        {
+                            productSize.Stock = newStock.ToString();
+                            _productService.Update(product);
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Yetersiz stok!" });
+                        }
+                    }
+                }
 
                 
-              _deliveryAdressesService.Add(orderDeliveryAdress);
-              
-                
-                cartItem.OrderStatus = OrderStatus.Ordered;
-                _orderService.Update(cartItem);
+                var existingOrderedItem = _orderService.GetOrderWithDeliveryAdress(i => 
+                    i.OrderStatus == OrderStatus.Ordered && 
+                    i.userId == user.Id && 
+                    i.ProductImage == cartItem.ProductImage && 
+                    i.Size == cartItem.Size);
+
+                if (existingOrderedItem != null && existingOrderedItem.DeliveryAdress.Adress == adress.Adress)
+                {
+                    
+                    existingOrderedItem.ProductNumber += cartItem.ProductNumber;
+                    existingOrderedItem.ProductPrice = (int.Parse(product.ProductPrice)*existingOrderedItem.ProductNumber).ToString();
+                    existingOrderedItem.CreatedDate = DateTime.Now;
+                    _orderService.Update(existingOrderedItem);
+                    
+                    
+                    _orderService.Remove(cartItem);
+                }
+                else
+                {
+                    
+                    DeliveryAdress orderDeliveryAdress = new DeliveryAdress()
+                    {
+                        Adress = adress.Adress,
+                        userId = user.Id,
+                        orderId = cartItem.Id
+                    };
+
+                    _deliveryAdressesService.Add(orderDeliveryAdress);
+                    
+                    cartItem.OrderStatus = OrderStatus.Ordered;
+                    cartItem.CreatedDate = DateTime.Now;
+                    _orderService.Update(cartItem);
+                }
 
                 try
                 {
                     _deliveryAdressesService.Save();
+                    _productService.Save();
                 }
-                catch {
-
+                catch
+                {
                     return BadRequest();
-                
                 }
-               
             }
 
             return Ok();
-            
-
-            
-
-
-
-
-            
         }
 
 

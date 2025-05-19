@@ -242,7 +242,6 @@ namespace E_CommerceWebsite.Controllers
         }
 
         [HttpPost]
-
         [Route("api/productQuantity")]
         public IActionResult ProductQuantity(OrderDTO orderDTO)
         {
