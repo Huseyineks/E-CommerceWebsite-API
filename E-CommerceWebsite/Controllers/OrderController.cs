@@ -491,8 +491,16 @@ namespace E_CommerceWebsite.Controllers
 
             try
             {
-                var order = _masterOrderService.MOIncludeRelationTables(i => i.Guid == Guid.Parse(guid));
-                return Ok(order);
+                var order = _masterOrderService.MOIncludeRelationTables(i => i.Guid == Guid.Parse(guid)).FirstOrDefault();
+
+                MasterOrderDTO masterOrderDTO = new MasterOrderDTO()
+                {
+                    CreatedDate = order.CreatedDate,
+                    DeliveryAdress = order.DeliveryAdress.Adress,
+                    Orders = order.Orders,
+                    Guid = order.Guid.ToString()
+                };
+                return Ok(masterOrderDTO);
             }
             catch
             {
