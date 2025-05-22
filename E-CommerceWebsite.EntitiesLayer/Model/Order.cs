@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace E_CommerceWebsite.EntitiesLayer.Model
@@ -36,13 +37,18 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
 
         //relations
-
+        [JsonIgnore]
         public virtual AppUser? User { get; set; }
 
         public int userId { get; set; }
 
 
-        public virtual DeliveryAdress? DeliveryAdress { get; set; }
+
+
+        [JsonIgnore]
+        public virtual MasterOrder? MasterOrder {  get; set; } 
+
+        public int? masterOrderId { get; set; }
 
         
     }

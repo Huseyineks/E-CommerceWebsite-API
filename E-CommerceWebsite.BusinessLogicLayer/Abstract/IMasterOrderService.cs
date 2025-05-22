@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace E_CommerceWebsite.BusinessLogicLayer.Abstract
 {
-    public interface IOrderService : IBaseService<Order>
+    public interface IMasterOrderService : IBaseService<MasterOrder>
     {
-
-       
+        public List<MasterOrder> MOIncludeRelationTables(Expression<Func<MasterOrder, bool>> filter);
     }
 }

@@ -4,6 +4,7 @@ using E_CommerceWebsite.DataAccesLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceWebsite.DataAccesLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522130249_new-table-to-make-things-more-easy")]
+    partial class newtabletomakethingsmoreeasy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,11 +174,22 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.Property<int?>("masterOrderId")
                         .HasColumnType("int");
 
+                    b.Property<int>("orderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("masterOrderId")
                         .IsUnique()
                         .HasFilter("[masterOrderId] IS NOT NULL");
+
+                    b.HasIndex("orderId")
+                        .IsUnique();
+
+                    b.HasIndex("userId");
 
                     b.ToTable("OrderDeliveryAdresses");
                 });
@@ -188,9 +202,6 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
@@ -199,7 +210,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("userId")
+                        .IsUnique();
 
                     b.ToTable("MasterOrders");
                 });
@@ -430,14 +442,30 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                         .HasForeignKey("E_CommerceWebsite.EntitiesLayer.Model.DeliveryAdress", "masterOrderId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.Order", "Order")
+                        .WithOne("DeliveryAdress")
+                        .HasForeignKey("E_CommerceWebsite.EntitiesLayer.Model.DeliveryAdress", "orderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.AppUser", "User")
+                        .WithMany("DeliveryAdresses")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("MasterOrder");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.MasterOrder", b =>
                 {
                     b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.AppUser", "User")
-                        .WithMany("MasterOrders")
-                        .HasForeignKey("userId")
+                        .WithOne("MasterOrder")
+                        .HasForeignKey("E_CommerceWebsite.EntitiesLayer.Model.MasterOrder", "userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -452,7 +480,7 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.AppUser", "User")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -526,7 +554,11 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.AppUser", b =>
                 {
-                    b.Navigation("MasterOrders");
+                    b.Navigation("DeliveryAdresses");
+
+                    b.Navigation("MasterOrder");
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.MasterOrder", b =>
@@ -534,6 +566,11 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
                     b.Navigation("DeliveryAdress");
 
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.Order", b =>
+                {
+                    b.Navigation("DeliveryAdress");
                 });
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.Product", b =>

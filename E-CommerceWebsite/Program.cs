@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +32,7 @@ builder.Services.AddIdentity<AppUser, AppUserRole>(options => options.SignIn.Req
     .AddDefaultTokenProviders();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -39,8 +41,16 @@ builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
 builder.Services.AddScoped<IValidator<ProductDTO>, ProductValidator>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDeliveryAdressesService, DeliveryAdressesService>();
+builder.Services.AddScoped<IMasterOrderService, MasterOrderService>();
+builder.Services.AddScoped<IMasterOrderRepository,MasterOrderRepository>();
 
 builder.Services.AddHttpContextAccessor();
+builder.Services
+  .AddControllers()
+  .AddNewtonsoftJson(opts =>
+    opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+  );
+
 
 
 builder.Services.AddAuthentication(options =>

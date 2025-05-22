@@ -31,16 +31,20 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
                 //entity.Property(i => i.Size).HasConversion<string>();
                 //entity.Property(i => i.ShippingStatus).HasConversion<string>();
                 entity.Property(i => i.OrderStatus).HasConversion<string>();
-               entity.HasOne(i => i.DeliveryAdress).WithOne(i => i.Order).HasForeignKey<DeliveryAdress>(i => i.orderId).OnDelete(DeleteBehavior.NoAction);
+              
+
 
                 
             });
 
-            builder.Entity<AppUser>(entity =>
-            {
-                entity.HasMany(i => i.DeliveryAdresses).WithOne(i => i.User).HasForeignKey(i => i.userId).OnDelete(DeleteBehavior.Cascade);
+           
 
-               
+            builder.Entity<MasterOrder>(entity =>
+            {
+                entity.HasMany(i => i.Orders).WithOne(i => i.MasterOrder).HasForeignKey(i => i.masterOrderId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(i => i.User).WithMany(i => i.MasterOrders).HasForeignKey(i => i.userId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(i => i.DeliveryAdress).WithOne(i => i.MasterOrder).HasForeignKey<DeliveryAdress>(i => i.masterOrderId).OnDelete(DeleteBehavior.NoAction);
+
             });
 
            
@@ -59,6 +63,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Data
 
 
         public DbSet<DeliveryAdress> OrderDeliveryAdresses { get; set;}
+
+        public DbSet<MasterOrder> MasterOrders { get; set; }
 
     }
 }

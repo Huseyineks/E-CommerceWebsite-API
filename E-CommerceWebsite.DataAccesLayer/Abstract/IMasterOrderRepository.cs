@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace E_CommerceWebsite.DataAccesLayer.Abstract
 {
-    public interface IOrderRepository : IBaseRepository<Order>
+    public interface IMasterOrderRepository : IBaseRepository<MasterOrder>
     {
-       
+        List<MasterOrder> MOIncludeRelationTables(Expression<Func<MasterOrder, bool>> filter);
     }
 }

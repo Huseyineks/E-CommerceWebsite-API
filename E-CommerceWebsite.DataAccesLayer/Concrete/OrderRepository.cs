@@ -14,22 +14,19 @@ namespace E_CommerceWebsite.DataAccesLayer.Concrete
     public class OrderRepository : BaseRepository<Order>, IOrderRepository
     {
 
-        private readonly ApplicationDbContext _db;
+       
 
-        public OrderRepository(ApplicationDbContext db) : base(db) {
+        public OrderRepository(ApplicationDbContext db) : base(db) { }
         
         
-            _db = db;
+          
         
         
-        }
+        
 
 
 
 
-        public Order GetOrderWithDeliveryAdress(Expression<Func<Order, bool>> filter)
-        {
-            return _db.Orders.Where(filter).Include(i => i.DeliveryAdress).FirstOrDefault();
-        }
+       
     }
 }

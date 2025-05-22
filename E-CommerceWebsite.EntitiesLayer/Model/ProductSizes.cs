@@ -14,10 +14,10 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
         public string Stock { get; set; }
 
         //relations
-
+        public int productId { get; set; }
         [JsonIgnore]
         public virtual Product Product { get; set; }
 
-        public int productId { get; set; }
+        
     }
 }

@@ -15,11 +15,10 @@ namespace E_CommerceWebsite.EntitiesLayer.Model
 
         //relation
 
-        public virtual AppUser User { get; set; }
-
-        public int userId { get; set; }
-        public virtual Order Order { get; set; }
     
-        public int orderId { get; set; }
+
+        public virtual MasterOrder? MasterOrder { get; set; }
+
+        public int? masterOrderId { get; set; }
     }
 }

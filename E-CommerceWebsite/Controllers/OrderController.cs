@@ -19,6 +19,7 @@ namespace E_CommerceWebsite.Controllers
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
         private readonly IDeliveryAdressesService _deliveryAdressesService;
+        private readonly IMasterOrderService _masterOrderService;
 
        
 
@@ -27,7 +28,8 @@ namespace E_CommerceWebsite.Controllers
             IHttpContextAccessor context, 
             ITokenService tokenService, 
             IUserService userService, 
-            IDeliveryAdressesService deliveryAdressesService)
+            IDeliveryAdressesService deliveryAdressesService,
+            IMasterOrderService masterOrderService)
         {
             _orderService = orderService;
             _productService = productService;
@@ -35,6 +37,7 @@ namespace E_CommerceWebsite.Controllers
             _tokenService = tokenService;
             _userService = userService;
             _deliveryAdressesService = deliveryAdressesService;
+            _masterOrderService = masterOrderService;
         }
 
         [HttpGet]
@@ -395,52 +398,112 @@ namespace E_CommerceWebsite.Controllers
                 }
 
                 
-                var existingOrderedItem = _orderService.GetOrderWithDeliveryAdress(i => 
-                    i.OrderStatus == OrderStatus.Ordered && 
-                    i.userId == user.Id && 
-                    i.ProductImage == cartItem.ProductImage && 
-                    i.Size == cartItem.Size);
+              
 
-                if (existingOrderedItem != null && existingOrderedItem.DeliveryAdress.Adress == adress.Adress)
-                {
-                    
-                    existingOrderedItem.ProductNumber += cartItem.ProductNumber;
-                    existingOrderedItem.ProductPrice = (int.Parse(product.ProductPrice)*existingOrderedItem.ProductNumber).ToString();
-                    existingOrderedItem.CreatedDate = DateTime.Now;
-                    _orderService.Update(existingOrderedItem);
-                    
-                    
-                    _orderService.Remove(cartItem);
-                }
-                else
-                {
-                    
-                    DeliveryAdress orderDeliveryAdress = new DeliveryAdress()
-                    {
-                        Adress = adress.Adress,
-                        userId = user.Id,
-                        orderId = cartItem.Id
-                    };
-
-                    _deliveryAdressesService.Add(orderDeliveryAdress);
+               
                     
                     cartItem.OrderStatus = OrderStatus.Ordered;
                     cartItem.CreatedDate = DateTime.Now;
-                    _orderService.Update(cartItem);
-                }
 
                 try
                 {
-                    _deliveryAdressesService.Save();
-                    _productService.Save();
+                    _orderService.Update(cartItem);
+                    _orderService.Save();
+                    
                 }
-                catch
+                catch (Exception ex)
                 {
                     return BadRequest();
                 }
+                    
+               
+            }
+
+            MasterOrder masterOrder = new MasterOrder()
+            {
+                CreatedDate = DateTime.Now,
+                Orders = cartItems,
+                Guid = Guid.NewGuid(),
+                DeliveryAdress = new DeliveryAdress()
+                {
+                    Adress = adress.Adress
+
+                },
+                userId = user.Id
+
+            };
+
+            try
+            {
+                _masterOrderService.Add(masterOrder);
+                _masterOrderService.Save();
+            }
+            catch
+            {
+                return BadRequest();
             }
 
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("api/getPastOrders")]
+
+        public IActionResult GetPastOrders()
+        {
+
+            var principal = _tokenService.GetTokenPrincipal();
+
+            var user = _userService.Get(i => i.UserName == principal.Identity.Name);
+         
+            try
+            {
+                var pastOrders = _masterOrderService.MOIncludeRelationTables(i => i.userId == user.Id);
+                List<MasterOrderDTO> masterOrderDTOs = new List<MasterOrderDTO>();
+
+                foreach (var pastOrder in pastOrders)
+                {
+                    masterOrderDTOs.Add(new MasterOrderDTO()
+                    {
+                        Guid = pastOrder.Guid.ToString(),
+                        CreatedDate = pastOrder.CreatedDate,
+                        DeliveryAdress = pastOrder.DeliveryAdress.Adress,
+                        Orders = pastOrder.Orders
+                    });
+                }
+                return Ok(masterOrderDTOs);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            
+        }
+
+        [HttpGet]
+        [Route("api/getOrder")]
+
+        public IActionResult GetOrder(string guid) {
+
+           
+
+
+            try
+            {
+                var order = _masterOrderService.MOIncludeRelationTables(i => i.Guid == Guid.Parse(guid));
+                return Ok(order);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+
+
+
+
+            
         }
 
 

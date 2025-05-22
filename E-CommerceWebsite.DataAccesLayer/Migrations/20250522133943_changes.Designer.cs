@@ -4,6 +4,7 @@ using E_CommerceWebsite.DataAccesLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceWebsite.DataAccesLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522133943_changes")]
+    partial class changes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,7 +202,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("userId")
+                        .IsUnique();
 
                     b.ToTable("MasterOrders");
                 });
@@ -436,8 +440,8 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.MasterOrder", b =>
                 {
                     b.HasOne("E_CommerceWebsite.EntitiesLayer.Model.AppUser", "User")
-                        .WithMany("MasterOrders")
-                        .HasForeignKey("userId")
+                        .WithOne("MasterOrder")
+                        .HasForeignKey("E_CommerceWebsite.EntitiesLayer.Model.MasterOrder", "userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -526,7 +530,7 @@ namespace E_CommerceWebsite.DataAccesLayer.Migrations
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.AppUser", b =>
                 {
-                    b.Navigation("MasterOrders");
+                    b.Navigation("MasterOrder");
                 });
 
             modelBuilder.Entity("E_CommerceWebsite.EntitiesLayer.Model.MasterOrder", b =>

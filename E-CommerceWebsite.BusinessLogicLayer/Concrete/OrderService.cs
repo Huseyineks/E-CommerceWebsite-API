@@ -12,23 +12,18 @@ namespace E_CommerceWebsite.BusinessLogicLayer.Concrete
 {
     public class OrderService : BaseService<Order>, IOrderService
     {
-        private readonly IOrderRepository _orderRepository;
-        public OrderService(IBaseRepository<Order> baseRepository,IOrderRepository orderRepository) : base(baseRepository) {
+        
+        public OrderService(IBaseRepository<Order> baseRepository) : base(baseRepository) {
         
         
         
-            _orderRepository = orderRepository;
+            
         }
 
 
 
 
 
-        public Order GetOrderWithDeliveryAdress(Expression<Func<Order, bool>> filter)
-        {
-
-            return _orderRepository.GetOrderWithDeliveryAdress(filter);
-
-        }
+       
     }
 }
