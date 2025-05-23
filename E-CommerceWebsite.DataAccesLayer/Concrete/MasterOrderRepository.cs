@@ -21,7 +21,7 @@ namespace E_CommerceWebsite.DataAccesLayer.Concrete
 
         public List<MasterOrder> MOIncludeRelationTables(Expression<Func<MasterOrder, bool>> filter)
         {
-            return _db.MasterOrders.Include(i => i.Orders).Include(i => i.DeliveryAdress).Where(filter).ToList();
+            return _db.MasterOrders.Include(i => i.Orders).Include(i => i.DeliveryAdress).Where(filter).Include(i => i.User).ToList();
         }
 
         

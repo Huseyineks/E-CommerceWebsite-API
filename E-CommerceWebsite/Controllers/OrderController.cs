@@ -493,12 +493,25 @@ namespace E_CommerceWebsite.Controllers
             {
                 var order = _masterOrderService.MOIncludeRelationTables(i => i.Guid == Guid.Parse(guid)).FirstOrDefault();
 
+                UserDTO user = new UserDTO()
+                {
+                    Adress = order.User.Adress,
+                    City = order.User.City,
+                    Email = order.User.Email,
+                    Neighbourhood = order.User.Neighbourhood,
+                    PhoneNumber = order.User.PhoneNumber,
+                    PostalCode = order.User.PostalCode,
+                    Username = order.User.UserName,
+                    Street = order.User.Street,
+                };
+
                 MasterOrderDTO masterOrderDTO = new MasterOrderDTO()
                 {
                     CreatedDate = order.CreatedDate,
                     DeliveryAdress = order.DeliveryAdress.Adress,
                     Orders = order.Orders,
-                    Guid = order.Guid.ToString()
+                    Guid = order.Guid.ToString(),
+                    User = user
                 };
                 return Ok(masterOrderDTO);
             }

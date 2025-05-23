@@ -15,6 +15,8 @@ namespace E_CommerceWebsite.EntitiesLayer.Model.DTOs
 
         public DateTime CreatedDate { get; set;}
 
+        public UserDTO? User { get; set; }
+
 
     }
 }
